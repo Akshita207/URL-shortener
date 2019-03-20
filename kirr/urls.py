@@ -18,4 +18,5 @@ from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('<slug:shortcode>/', URLRedirectView.as_view(), name='scode'),
 ]
