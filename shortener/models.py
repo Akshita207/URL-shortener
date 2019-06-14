@@ -1,17 +1,22 @@
 from django.db import models
-from .utils import code_generator
 from django.conf import settings
+from django.urls import reverse
+
+from django.core.exceptions import ValidationError
+
+from .utils import code_generator, create_shortcode
 from .validators import validate_url
 
 
-SHORTCODE_MAX = getattr(settings, 'SHORTCODE_MAX', 15)
+# Create your models here.
 
+SHORTCODE_MAX = getattr(settings, 'SHORTCODE_MAX', 15)
 
 class KirrURLManager(models.Manager):
 
 	def all(self,*args,**kwargs):
-		qs= super(KirrURLManager,self).all(*args,**kwargs).filter(isactive=True)
-		return qs
+		return super(KirrURLManager,self).all(*args,**kwargs).filter(isactive=True)
+
 	def get_or_create(self, *args, **kwargs):
 		try:
 			kwargs['url'] = validate_url(kwargs.get('url'))
@@ -28,7 +33,6 @@ class KirrURLManager(models.Manager):
 			print(obj.shortcode)
 			obj.save()
 		return "New shortcodes made {codes}".format(codes = objects.count())
-
 
 class KirrURL(models.Model):
 	url = models.CharField(max_length=256, validators = [validate_url])
